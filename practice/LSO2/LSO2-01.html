@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script type="text/javascript">
+        window.onload = function(){
+            var theCanvas = document.getElementById('canvas');
+            var context = theCanvas.getContext('2d');
+
+            /* context.fillStyle='#ff0000';
+            context.fillRect(0, 0, 100, 100);
+            context.clearRect(25, 25, 50, 50); */
+
+            /* context.fillStyle = "red";
+            context.save();
+            context.fillStyle = "blue";
+            context.fillRect(0, 0, 100, 100);
+            context.save();
+            context.fillStyle = "green";
+            context.fillRect(100, 100, 100, 100);
+            context.restore();//屏蔽此行为蓝色
+            context.restore();
+            context.fillRect(200,200,100,100); */
+
+            drawLine(context);
+            function drawLine(ctx) {
+                //没有用beginPath的情况，理解状态的canvas是基于状态的绘图
+                //beginPath(); //有beginPath和没有的区别
+                ctx.strokeStyle = 'rgb(0,0,255)';
+                ctx.lineWidth = 5;
+                ctx.moveTo(10,10);
+                ctx.lineTo(200,10);
+                ctx.lineTo(200,120);
+                // ctx.closePath();//有closePath和没有的区别,closePath与beginPath是否成对？
+                ctx.stroke();
+
+                
+                ctx.beginPath(); //有beginPath和没有的区别
+                ctx.strokeStyle = 'red';
+                ctx.lineWidth = 10;
+                ctx.moveTo(10,200);
+                ctx.lineTo(200,200);
+                ctx.lineTo(200,300);
+                ctx.closePath();
+                ctx.stroke();
+            }
+
+            /* console.log("构造函数:" + context.constructor);
+            console.log(context instanceof CanvasRenderingContext2D);
+            console.log(CanvasRenderingContext2D.prototype == context);
+            for (const key in context) {
+                const element = context[key];
+                if (context.hasOwnProperty(key)) {
+                    console.log("自身属性:", element);
+                } else {
+                    console.log("非自身属性:", element);
+                }
+            } */
+        }
+
+        
+        
+    </script>
+</head>
+<body>
+    <div>
+        <canvas id="canvas" width="500" height="500" style="border:2px #ccc solid">
+            Your browser does not support the HTML 5 Canvas.
+        </canvas>
+    </div>
+</body>
+</html>
