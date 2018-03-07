@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./js/MyCanvasLib.js"></script>
+    <script type="text/javascript">
+        window.addEventListener('load', eventWindowLoaded, false);
+        function eventWindowLoaded() {
+            canvasApp();
+        }
+        
+        function canvasApp() {
+            var theCanvas = document.getElementById('canvas');
+            var context = theCanvas.getContext('2d');
+            drawRect(context);
+            drawEllipse(context);
+            drawTriangle(context);
+            drawPentagon(context);
+        }
+        function drawRect(ctx){
+
+        }
+        function drawEllipse(ctx) {
+            
+        }
+        function drawTriangle(ctx) {
+            
+        }
+        function drawPentagon(ctx){
+            ctx.pentagon(10,100,200,20,30,300,400,40,50,500);
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <canvas id="canvas" width="500" height="500" style="border:solid #ccc 2px">
+            Your browser does not support the HTML 5 Canvas.
+        </canvas>
+    </div>
+</body>
+</html>
