@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body style="background: black;">
+    <canvas id="canvas" style="display:block;margin:0 auto;border:1px solid #aaa;">
+        您的浏览器尚不支持canvas
+    </canvas>
+    <!-- <input type="range" id="scale-range" min="0.5" max="3.0" step="0.01" value="1.0" style="display:block;margin:20px auto;width:800px"/> -->
+    <!-- <canvas id="watermark-canvas" style="display:none;margin:0 auto;border:1px solid #aaa;">
+        您的浏览器尚不支持canvas
+    </canvas> -->
+    <canvas id="offCanvas" style="display: none">
+    </canvas>
+    <script>
+        var canvas = document.getElementById("canvas");
+        var context = canvas.getContext("2d");
+
+        /* var watermarkCanvas = document.getElementById("watermark-canvas");
+        var watermarkContext = watermarkCanvas.getContext("2d"); */
+
+        var offCanvas = document.getElementById("offCanvas");
+        var offContext = offCanvas.getContext("2d");
+
+        //var slider = document.getElementById("scale-range");
+
+        var isMouseDown = false;
+        var scale2;
+
+        var image = new Image();
+
+        window.onload = function(){
+
+            canvas.width = 1152*0.75;
+            canvas.height = 768*0.75;
+
+            //var scale = slider.value;
+            image.src = "./images/img-ej.jpg";
+            image.onload = function(){
+                /* drawImageByScale( scale );
+                
+                slider.onmousemove = function(){
+                    scale = slider.value
+                    drawImageByScale( scale )
+                } */
+                offCanvas.width = image.width;
+                offCanvas.height = image.height;
+                scale2 = offCanvas.width / canvas.width;
+                //console.log(scale);
+                context.drawImage( image , 0 , 0 , canvas.width , canvas.height );
+                offContext.drawImage( image , 0 , 0 );
+            }
+        
+        //setup watermark canvas
+        watermarkCanvas.width = 600;
+        watermarkCanvas.height = 100;
+
+        watermarkContext.font = "bold 30px Arial";
+        watermarkContext.lineWidth = "1";
+        watermarkContext.fillStyle = "rgba( 255 , 0 , 0 , 0.5 )";
+        watermarkContext.textBaseline = "middle";
+        watermarkContext.fillText( "== 含恩静 ==" , 80 , 50 );
+
+        }
+
+        function drawImageByScale( scale ){
+
+            var imageWidth = 1152*0.75 * scale;
+            var imageHeight = 768*0.75 * scale;
+
+            x = canvas.width /2 - imageWidth / 2;
+            y = canvas.height / 2 - imageHeight / 2;
+
+            //理解canvas即时模式
+            context.clearRect( 0 , 0 , canvas.width , canvas.height );//若没有此行会如何
+
+            context.drawImage( image , x , y , imageWidth , imageHeight );
+            context.drawImage( watermarkCanvas , canvas.width - watermarkCanvas.width ,
+                                                  canvas.height - watermarkCanvas.height );
+        }
+
+        //放大镜效果
+        //计算坐标补偿
+        function windowToCanvas( x , y ){
+            var bbox = canvas.getBoundingClientRect();
+            return {x:x-bbox.left , y:y-bbox.top};
+        }
+
+        canvas.onmousedown = function(e){
+            //preventDefault() 方法阻止元素发生默认的行为（例如，当点击提交按钮时阻止对表单的提交）。
+            e.preventDefault();
+            isMouseDown = true;
+            point = windowToCanvas( e.clientX , e.clientY );
+            console.log( point.x , point.y );
+            drawCanvasWithMagnifier( true , point );
+        }
+
+        canvas.onmouseup = function(e){
+            e.preventDefault();
+            isMouseDown = false;
+            drawCanvasWithMagnifier( false );
+        }
+
+        canvas.onmouseout = function(e){
+            e.preventDefault();
+            isMouseDown = false;
+            drawCanvasWithMagnifier( false );
+        }
+
+        canvas.onmousemove = function(e){
+            e.preventDefault();
+            if( isMouseDown == true ){
+                point = windowToCanvas( e.clientX , e.clientY );
+                console.log( point.x , point.y );
+                drawCanvasWithMagnifier( true , point );
+            }
+        }
+
+        function drawCanvasWithMagnifier( isShowMagnifier , point ){
+            context.clearRect( 0 , 0 , canvas.width , canvas.height );
+            context.drawImage( image , 0 , 0 , canvas.width , canvas.height );
+            if( isShowMagnifier == true ){
+                drawMagnifier( point );
+            }
+        }
+
+        function drawMagnifier( point ){
+
+            var mr = 200;
+            var imageLG_cx = point.x * scale2;
+            var imageLG_cy = point.y * scale2;
+
+            //sourse x y
+            var sx = imageLG_cx - mr;
+            var sy = imageLG_cy - mr;
+            //destination x y
+            var dx = point.x - mr;
+            var dy = point.y - mr;
+
+            context.save();//保持状态
+            context.lineWidth = 10.0;
+            context.strokeStyle = "#069";
+
+            context.beginPath();
+            context.arc( point.x , point.y , mr , 0 , Math.PI*2 , false );
+            context.stroke();
+            context.clip();
+            context.drawImage( offCanvas , sx , sy , 2*mr , 2*mr , dx , dy , 2*mr , 2*mr );
+            context.restore();
+        }
+
+    </script>
+</body>
+</html>
